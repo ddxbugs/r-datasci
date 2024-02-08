@@ -15,7 +15,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-<h1>Wilcoxon Rank Sum and Signed Rank Tests: Logging</h1>
+## Wilcoxon Rank Sum and Signed Rank Tests: Logging</h1>
 <h2>
 When wildfires ravage forests, the timber industry argues that logging (actual logging of trees … not the mathematical log!) the burned trees enhances forest recovery; the EPA argues the opposite. The 2002 Biscuit Fire in southwest Oregon provided a test case.  Researchers selected 16 fire-affected plots in 2004, before any logging was done and counted tree seedlings along a randomly located transect pattern in each plot.  They returned in 2005, after nine of the plots had been logged, and counted the tree seedlings along the same transects.  The percent of seedlings lost from 2004 to 2005 is recorded in the file logging.csv for logged (L) and unlogged (U) plots:
 </h2><br>
