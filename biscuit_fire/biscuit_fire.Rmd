@@ -42,6 +42,26 @@ actionL <- loggingDF %>% filter(Action == "L")
 <h5>Wilcoxon Rank Sum Test</h5>
 ```{r}
 wilcox.test(actionU$PercentLost, actionL$PercentLost, exact=TRUE)
-wilcox.test(actionU$PercentLost, actionL$PercentLost, exact=TRUE, alternative="g")
+wilcox.test(actionU$PercentLost, actionL$PercentLost, exact=TRUE, alternative="l")
 wilcox.test(actionU$PercentLost, actionL$PercentLost, exact=FALSE, alternative="g")
+```
+<h5>Permutation Test</h5>
+```{r}
+number_of_permutations <- 10000
+xbarholder <- c()
+counter <- 0
+observed_difference <- mean(subset(loggingDF, Action=="L")$PercentLost) - mean(subset(loggingDF, Action=="U")$PercentLost)
+for (i in 1:number_of_permutations) {
+  scramble <- sample(loggingDF$PercentLost, 16)
+  logged <- scramble[1:9]
+  unlogged <- scramble[10:16]
+  difference <- mean(logged) - mean(unlogged)
+  xbarholder[i] <- difference
+  if (difference >= observed_difference)
+    counter <- counter + 1
+}
+hist(xbarholder, col="lightblue", main=paste("Differences of Means Under Null Distribution, n=", 16), xlab="Difference in Means")
+abline(v=observed_difference, col="red", lwd=3)
+p_value <- counter/number_of_permutations
+p_value
 ```
