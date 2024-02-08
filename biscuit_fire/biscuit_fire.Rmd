@@ -1,0 +1,43 @@
+---
+title: "biscuit_fire"
+author: "ddxbugs"
+date: "2024-02-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+<h1>Wilcoxon Rank Sum and Signed Rank Tests: Logging</h1>
+<h2>
+When wildfires ravage forests, the timber industry argues that logging (actual logging of trees … not the mathematical log!) the burned trees enhances forest recovery; the EPA argues the opposite. The 2002 Biscuit Fire in southwest Oregon provided a test case.  Researchers selected 16 fire-affected plots in 2004, before any logging was done and counted tree seedlings along a randomly located transect pattern in each plot.  They returned in 2005, after nine of the plots had been logged, and counted the tree seedlings along the same transects.  The percent of seedlings lost from 2004 to 2005 is recorded in the file logging.csv for logged (L) and unlogged (U) plots:
+</h2><br>
+<h2>
+Test the EPA’s assertion (and thus the opposite of the logging industries assertion) that logging (again…. not the mathematical log! :) actually increases the percentage of seedlings lost from 2004 to 2005.  
+</h2>
+<h3>
+Perform a complete analysis using a rank sum test in SAS. (Logging data).
+Verify the p-value and confidence interval by running the rank sum test in R (using R function Wilcox.test).  (You do not need to repeat the complete analysis … simply cut and paste a screen shot of your code and the output.) You may use: https://www.r-bloggers.com/wilcoxon-mann-whitney-rank-sum-test-or-test-u/ for reference. 
+Finally, perform a permutation test for the difference of means.  As with all ”tests”, this should include a clear conclusion written in the context of the problem and in terms understandable by a client (although it should also include a pvalue.)  
+</h3>
+```{r}
+library(dplyr)
+loggingDF <= read.csv("Logging.csv", header=TRUE)
+loggingDF %>% group_by(Action) %>% summarize(
+  count <- n(),
+  median <- median(PercentLost, na.rm=TRUE),
+  IQR <- IQR(PercentLost, na.rm=TRUE)
+)
+actionU <- loggingDF %>% filter(Action == "U")
+actionL <- loggingDF %>% filter(Action == "L")
+
+wilcox.test(actionU$PercentLost, actionL$PercentLost, exact=TRUE)
+```
+```
