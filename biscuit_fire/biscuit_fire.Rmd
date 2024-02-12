@@ -106,6 +106,9 @@ shade(14, 0.05, t_calc=-1.645006)
 
 <h5>Wilcoxon Rank Sum Test</h5>
 ```{r}
+
+wilcox.test(PercentLost ~ Action, data=loggingDF, conf.int=0.1, alternative='two.sided', exact=TRUE)
+
 wilcox.test(actionU$PercentLost, actionL$PercentLost, exact=TRUE)
 wilcox.test(actionU$PercentLost, actionL$PercentLost, exact=TRUE, alternative="l")
 wilcox.test(actionU$PercentLost, actionL$PercentLost, exact=FALSE, alternative="g")
