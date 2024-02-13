@@ -80,14 +80,22 @@ shade <- function(df, alpha, h0 = 0, sides='both', t_calc=NULL) {
   axis(1, at=at, labels=labels)
 }
 #The above defines the function shade. To use it, you must call it. More examples are in the comments above.
-shade(8, 0.05, sides="right", t_calc=0.077565)
+shade(8, 0.05, sides="right", t_calc=1.89552)
 ```
 
 <h6>Signed Rank Test</h6>
 ```{r}
 t_crit <- qt(1-0.05, 8)
-t_stat <- pt(1.42164, 8, lower.tail=FALSE)
+t_stat <- pt(1.89552, 8, lower.tail=FALSE)
+t_crit
+t_stat
+shade(8, 0.05, sides="right", t_calc=1.89552)
 
-shade(8, 0.05, sides="right", t_calc=t_stat)
-wilcox.test(df$before, df$after, exact=FALSE, )
+wilcox.test(df$before, df$after, alternative="greater", exact=FALSE)
+
+```
+
+<h6>paired t-test</h6>
+```{r}
+t.test(df$before, df$after, alternative="greater", paired=TRUE)
 ```
