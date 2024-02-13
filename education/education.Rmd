@@ -78,7 +78,7 @@ shade <- function(df, alpha, h0 = 0, sides='both', t_calc=NULL) {
   axis(1, at=at, labels=labels)
 }
 #The above defines the function shade. To use it, you must call it. More examples are in the comments above.
-shade(1424, 0.05, sides="left", t_calc=-1.64592)
+shade(1424, 0.05, sides="left", t_calc=-9.9837)
 
 ```
 
