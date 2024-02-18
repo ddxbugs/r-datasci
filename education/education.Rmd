@@ -25,7 +25,7 @@ str(df)
 summary(df)
 sum(is.na(df))
 ```
-<h6>plot normal distribution</h6>
+<h6>two-sample hypothesis testing</h6>
 ```{r}
 #' Credit: Volodymyr Orlov
 #' modified by MSDS SMU
@@ -86,4 +86,18 @@ shade(1424, 0.05, sides="left", t_calc=-9.9837)
 
 ```{r}
 t.test(Income2005~Educ, data=df, var.equal=FALSE, conf.level=0.05)
+```
+<h6>comparison among several samples</h6>
+```{r}
+
+# import data
+ex0525 = read.csv("ex0525.csv", header=TRUE)
+ex0525
+
+# plot data
+library(tidyverse)
+ex0525 %>% ggplot(aes(Income2005, fill=Educ)) + geom_histogram(binwidth = 10000) + facet_wrap(~Educ) + ggtitle("Histogram of income by education")
+ex0525 %>% ggplot(aes(sample=Income2005, color=Educ)) + geom_qq() + facet_wrap(~Educ) + ggtitle("Q-Q plot of income by education")
+ex0525 %>% ggplot(aes(Income2005, fill=Educ)) + geom_boxplot() + coord_flip() + ggtitle("Boxplot of income by education")
+
 ```
