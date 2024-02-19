@@ -15,18 +15,25 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-<h6>import data</h6>
+<h5></h5>
 ```{r}
-df = read.csv("data.csv", header=TRUE)
+#install.packages("onewaytests")
+library(onewaytests)
+library(tidyverse)
+library(dplyr)
 ```
-<h6>tidy data</h6>
+
+<h6>ex520 data set</h6>
 ```{r}
+
+# import data
+df = read.csv("ex0515.csv", header=TRUE)
 str(df)
+
+# summarize and visualize the data
 summary(df)
 sum(is.na(df))
-```
-<h6>two-sample hypothesis testing</h6>
-```{r}
+
 #' Credit: Volodymyr Orlov
 #' modified by MSDS SMU
 #' https://github.com/VolodymyrOrlov/MSDS6371/blob/master/shade.r
@@ -80,24 +87,51 @@ shade <- function(df, alpha, h0 = 0, sides='both', t_calc=NULL) {
 #The above defines the function shade. To use it, you must call it. More examples are in the comments above.
 shade(1424, 0.05, sides="left", t_calc=-9.9837)
 
-```
-
-<h6>t-tools</h6>
-
-```{r}
+# Welch's Two-Sample T-Test
 t.test(Income2005~Educ, data=df, var.equal=FALSE, conf.level=0.05)
+
 ```
-<h6>comparison among several samples</h6>
+
+<h5>ex0525 data set</h5>
 ```{r}
 
 # import data
-ex0525 = read.csv("ex0525.csv", header=TRUE)
-ex0525
+ex0525 <- read.csv("ex0525.csv", header=TRUE)
+str(ex0525)
 
-# plot data
-library(tidyverse)
-ex0525 %>% ggplot(aes(Income2005, fill=Educ)) + geom_histogram(binwidth = 10000) + facet_wrap(~Educ) + ggtitle("Histogram of income by education")
-ex0525 %>% ggplot(aes(sample=Income2005, color=Educ)) + geom_qq() + facet_wrap(~Educ) + ggtitle("Q-Q plot of income by education")
+# summarize and visualize the data
+ex0525 %>% group_by(Educ) %>% summarise(medianIncome=median(Income2005), meanIncome=mean(Income2005), s=sd(Income2005), n=n())
+ex0525 %>% ggplot(aes(Income2005, fill=Educ)) + geom_histogram(binwidth = 10000) + facet_grid(~Educ) + ggtitle("Histogram of income by education")
+ex0525 %>% ggplot(aes(sample=Income2005, color=Educ)) + geom_qq() + facet_grid(~Educ) + ggtitle("Q-Q plot of income by education")
 ex0525 %>% ggplot(aes(Income2005, fill=Educ)) + geom_boxplot() + coord_flip() + ggtitle("Boxplot of income by education")
+
+```
+<h5>One Way ANOVA</h5>
+```{r}
+fit <- lm(Income2005~Educ, data=ex0525)
+anova(fit)
+
+# log transformation
+ex0525$log.income <- log(ex0525$Income2005)
+ex0525.anova <- aov(log.income ~ Educ, data=ex0525)
+summary(ex0525.anova)
+# residuals(ex0525.anova)
+
+```
+<h5>Brown-Forsythe Test for Equality of Variances</h5>
+```{r}
+
+bf.test(Income2005~Educ, data=ex0525)
+```
+
+<h5>Kruskal-Wallis Test</h5>
+```{r}
+kruskal.test(Income2005~Educ, data=ex0525)
+```
+
+<h5>Wilcoxon rank sum test with continuity correction</h5>
+```{r}
+a <- ex0525[ex0525$Educ !='16',]
+b <- ex0525[ex0525$Educ != '>16',]
 
 ```
