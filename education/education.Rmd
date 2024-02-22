@@ -2,7 +2,9 @@
 title: "education"
 author: "ddxbugs"
 date: "2024-02-12"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -27,12 +29,12 @@ library(dplyr)
 ```{r}
 
 # import data
-df = read.csv("ex0515.csv", header=TRUE)
-str(df)
+ex0515 = read.csv("ex0515.csv", header=TRUE)
+str(ex0515)
 
 # summarize and visualize the data
-summary(df)
-sum(is.na(df))
+summary(ex0515)
+sum(is.na(ex0515))
 
 #' Credit: Volodymyr Orlov
 #' modified by MSDS SMU
@@ -88,7 +90,10 @@ shade <- function(df, alpha, h0 = 0, sides='both', t_calc=NULL) {
 shade(1424, 0.05, sides="left", t_calc=-9.9837)
 
 # Welch's Two-Sample T-Test
-t.test(Income2005~Educ, data=df, var.equal=FALSE, conf.level=0.05)
+t.test(Income2005~Educ, data=ex0515, var.equal=TRUE, conf.level=0.05)
+
+# log transformation
+ex0515$log.income <- log(ex0515$Income2005)
 
 ```
 
@@ -99,11 +104,18 @@ t.test(Income2005~Educ, data=df, var.equal=FALSE, conf.level=0.05)
 ex0525 <- read.csv("ex0525.csv", header=TRUE)
 str(ex0525)
 
+# log transform data
+ex0525$log.income <- log(ex0525$Income2005)
+
 # summarize and visualize the data
 ex0525 %>% group_by(Educ) %>% summarise(medianIncome=median(Income2005), meanIncome=mean(Income2005), s=sd(Income2005), n=n())
-ex0525 %>% ggplot(aes(Income2005, fill=Educ)) + geom_histogram(binwidth = 10000) + facet_grid(~Educ) + ggtitle("Histogram of income by education")
-ex0525 %>% ggplot(aes(sample=Income2005, color=Educ)) + geom_qq() + facet_grid(~Educ) + ggtitle("Q-Q plot of income by education")
+ex0525 %>% ggplot(aes(Income2005, fill=Educ)) + geom_histogram(binwidth = 10000) + facet_wrap(~Educ) + ggtitle("Histogram of income by education")
+ex0525 %>% ggplot(aes(sample=Income2005, color=Educ)) + geom_qq() + facet_wrap(~Educ) + ggtitle("Q-Q plot of income by education")
 ex0525 %>% ggplot(aes(Income2005, fill=Educ)) + geom_boxplot() + coord_flip() + ggtitle("Boxplot of income by education")
+
+ex0525 %>% ggplot(aes(log.income, fill=Educ)) + geom_histogram() + facet_wrap(~Educ) + ggtitle("Histogram of income (log) by education")
+ex0525 %>% ggplot(aes(sample=log.income, color=Educ)) + geom_qq() + facet_wrap(~Educ) + ggtitle("Q-Q plot of income (log) by education")
+ex0525 %>% ggplot(aes(log.income, fill=Educ)) + geom_boxplot() + coord_flip() + ggtitle("Boxplot of income (log) by education")
 
 ```
 <h5>One Way ANOVA</h5>
@@ -111,22 +123,32 @@ ex0525 %>% ggplot(aes(Income2005, fill=Educ)) + geom_boxplot() + coord_flip() + 
 fit <- lm(Income2005~Educ, data=ex0525)
 anova(fit)
 
-# log transformation
-ex0525$log.income <- log(ex0525$Income2005)
 ex0525.anova <- aov(log.income ~ Educ, data=ex0525)
 summary(ex0525.anova)
 # residuals(ex0525.anova)
 
+a <- ex0525[ex0525$Educ=='16',]
+b <- ex0525[ex0525$Educ=='>16',]
+
+t.test(a$log.income, b$log.income, var.equal=TRUE, conf.level=0.05)
 ```
 <h5>Brown-Forsythe Test for Equality of Variances</h5>
 ```{r}
 
 bf.test(Income2005~Educ, data=ex0525)
+
+
+bf.test(log.income~Educ, data=ex0525)
 ```
 
 <h5>Kruskal-Wallis Test</h5>
 ```{r}
 kruskal.test(Income2005~Educ, data=ex0525)
+
+
+kruskal.test(log.income~Educ, data=ex0525)
+qchisq(.95, 4)
+
 ```
 
 <h5>Wilcoxon rank sum test with continuity correction</h5>
@@ -134,4 +156,5 @@ kruskal.test(Income2005~Educ, data=ex0525)
 a <- ex0525[ex0525$Educ !='16',]
 b <- ex0525[ex0525$Educ != '>16',]
 
+pf(12.291232, 3, 2579, lower.tail=FALSE)
 ```
