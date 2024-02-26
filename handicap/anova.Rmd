@@ -1,0 +1,28 @@
+---
+title: "anova"
+author: "ddxbugs"
+date: "2024-02-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+library(emmeans)
+
+df <- read.csv("handicap.csv")
+```
+
+```{r}
+unique(df$Handicap)
+fit <- lm(Score~Handicap, data=df)
+leastsquare <- lsmeans(fit, "Handicap")
+contrasts <- list(constrast <- c(0.5, -0.5, 0.5, 0, -0.5))
+contrast(leastsquare, contrasts, adjust="sidak")
+contrast(leastsquare, contrasts)
+```
+```{r}
+```
