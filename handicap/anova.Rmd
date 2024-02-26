@@ -2,7 +2,9 @@
 title: "anova"
 author: "ddxbugs"
 date: "2024-02-26"
-output: html_document
+output:
+  word_document: default
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -45,7 +47,7 @@ bf.test(Score~Handicap, data=df)
 ```
 # Multiple comparisons
 ```{r}
-fit <- lm(Score~Handicap, data=df)
+fit <- aov(Score~Handicap, data=df)
 summary(fit)
 
 # Contrasts
@@ -82,7 +84,7 @@ summary(glht(fit, linfct=mcp(Handicap="Tukey")))
 confint(glht(fit, linfct=mcp(Handicap="Tukey")))
 
 # Scheffe
-ScheffeTest(fit, which="Handicap")
+ScheffeTest(x=fit, data=df, which="Handicap")
 
 # Dunnett Contrast
 summary(glht(fit, linfct=mcp(Handicap="Dunnett")))
