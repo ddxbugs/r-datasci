@@ -11,12 +11,19 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
+install.packages("agricolae")
+install.packages("multcomp")
+
 library(emmeans)
+library(agricolae)
+library(multcomp)
 
 df <- read.csv("handicap.csv")
 ```
 
 ```{r}
+df$Handicap <- factor(df$Handicap)
+
 unique(df$Handicap)
 fit <- lm(Score~Handicap, data=df)
 leastsquare <- lsmeans(fit, "Handicap")
@@ -24,5 +31,21 @@ contrasts <- list(constrast <- c(0.5, -0.5, 0.5, 0, -0.5))
 contrast(leastsquare, contrasts, adjust="sidak")
 contrast(leastsquare, contrasts)
 ```
+
 ```{r}
+aov <- aov(Score~Handicap, data=df)
+
+df.bon <- LSD.test(aov, 'Handicap', p.adj='bonferroni')
+df.lsd <- LSD.test(aov, 'Handicap', p.adj='none')
+df.scheffe <- scheffe.test(aov, 'Handicap')
+df.tukey <- HSD.test(aov, 'Handicap')
+
+df.bon
+df.lsd
+df.scheffe
+df.tukey
+```
+
+```{r}
+
 ```
