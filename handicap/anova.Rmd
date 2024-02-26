@@ -13,13 +13,16 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 # install.packages("agricolae")
 # install.packages("multcomp")
-
+# install.packages("DescTools")
+# install.packages("pairwiseCI")
 library(emmeans)
 library(agricolae)
 library(ggplot2)
 library(multcomp)
 library(onewaytests)
 library(car)
+library(DescTools)
+library(pairwiseCI)
 ```
 # Data import and preprocessing
 ```{r}
@@ -32,6 +35,7 @@ unique(df$Handicap)
 # Exploratory Data Analysis
 ```{r}
 ggplot(df, aes(Score, fill=Handicap)) + geom_histogram(binwidth=1) + facet_grid(~Handicap) + labs(x="Score", y="Frequency", title="Histogram by Handicap")
+ggplot(df, aes(Handicap, Score, shape=Handicap, color=Handicap)) + geom_point(position="jitter") + labs(x="Handicap", y="Score", title="Scatter plot by Handicap")
 ggplot(df, aes(Handicap, Score, fill=Handicap)) + geom_boxplot() + labs(x="Handicap", y="Score", title="Boxplot by Handicap")
 ```
 # Preliminary analysis of variance
@@ -39,32 +43,49 @@ ggplot(df, aes(Handicap, Score, fill=Handicap)) + geom_boxplot() + labs(x="Handi
 leveneTest(Score~Handicap, data=df)
 bf.test(Score~Handicap, data=df)
 ```
-
+# Multiple comparisons
 ```{r}
 fit <- lm(Score~Handicap, data=df)
+summary(fit)
+
+# Contrasts
 leastsquare <- lsmeans(fit, "Handicap")
 contrasts <- list(constrast <- c(0.5, -0.5, 0.5, 0, -0.5))
 contrast(leastsquare, contrasts, adjust="sidak")
 contrast(leastsquare, contrasts)
 ```
 
+# Post-hoc ANOVA
 ```{r}
-aov <- aov(Score~Handicap, data=df)
 
-df.bon <- LSD.test(aov, 'Handicap', p.adj='bonferroni')
-df.lsd <- LSD.test(aov, 'Handicap', p.adj='none')
-df.scheffe <- scheffe.test(aov, 'Handicap')
-df.tukey <- HSD.test(aov, 'Handicap')
+df.bon <- LSD.test(fit, 'Handicap', p.adj='bonferroni')
+df.lsd <- LSD.test(fit, 'Handicap', p.adj='none')
+df.scheffe <- scheffe.test(fit, 'Handicap')
+df.tukey <- HSD.test(fit, 'Handicap')
 
 df.bon
 df.lsd
 df.scheffe
 df.tukey
+
+# Bonferroni
+summary(glht(fit, linfct=mcp(Handicap="Tukey")), test=adjusted(type="bonferroni"))
+pairwiseCI(Score~Handicap, data=df)
+pairwise.t.test(df$Score, df$Handicap, p.adjust="bonferroni")
+
+# LSD
+summary(glht(fit, linfct=mcp(Handicap="Tukey")), test=adjusted(type="none"))
+confint(glht(fit, linfct=mcp(Handicap="Tukey")))
+
+# Tukey-Kramer
+summary(glht(fit, linfct=mcp(Handicap="Tukey")))
+confint(glht(fit, linfct=mcp(Handicap="Tukey")))
+
+# Scheffe
+ScheffeTest(fit, which="Handicap")
+
+# Dunnett Contrast
+summary(glht(fit, linfct=mcp(Handicap="Dunnett")))
+confint(glht(fit, linfct=mcp(Handicap="Dunnett")))
 ```
 
-```{r}
-fit <- lm(Score~Handicap, data=df)
-gfit <- glht(fit, linfct=mcp(Handicap="Tukey"))
-summary(gfit, test=adjusted(type="none"))
-confint(gfit)
-```
