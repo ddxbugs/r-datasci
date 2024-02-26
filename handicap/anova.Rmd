@@ -11,20 +11,36 @@ knitr::opts_chunk$set(echo = TRUE)
 
 
 ```{r}
-install.packages("agricolae")
-install.packages("multcomp")
+# install.packages("agricolae")
+# install.packages("multcomp")
 
 library(emmeans)
 library(agricolae)
+library(ggplot2)
 library(multcomp)
-
+library(onewaytests)
+library(car)
+```
+# Data import and preprocessing
+```{r}
 df <- read.csv("handicap.csv")
+
+str(df)
+df$Handicap <- factor(df$Handicap)
+unique(df$Handicap)
+```
+# Exploratory Data Analysis
+```{r}
+ggplot(df, aes(Score, fill=Handicap)) + geom_histogram(binwidth=1) + facet_grid(~Handicap) + labs(x="Score", y="Frequency", title="Histogram by Handicap")
+ggplot(df, aes(Handicap, Score, fill=Handicap)) + geom_boxplot() + labs(x="Handicap", y="Score", title="Boxplot by Handicap")
+```
+# Preliminary analysis of variance
+```{r}
+leveneTest(Score~Handicap, data=df)
+bf.test(Score~Handicap, data=df)
 ```
 
 ```{r}
-df$Handicap <- factor(df$Handicap)
-
-unique(df$Handicap)
 fit <- lm(Score~Handicap, data=df)
 leastsquare <- lsmeans(fit, "Handicap")
 contrasts <- list(constrast <- c(0.5, -0.5, 0.5, 0, -0.5))
@@ -47,5 +63,8 @@ df.tukey
 ```
 
 ```{r}
-
+fit <- lm(Score~Handicap, data=df)
+gfit <- glht(fit, linfct=mcp(Handicap="Tukey"))
+summary(gfit, test=adjusted(type="none"))
+confint(gfit)
 ```
