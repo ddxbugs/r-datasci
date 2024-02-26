@@ -25,6 +25,7 @@ library(onewaytests)
 library(car)
 library(DescTools)
 library(pairwiseCI)
+library(tidyverse)
 ```
 # Data import and preprocessing
 ```{r}
@@ -36,6 +37,8 @@ unique(df$Handicap)
 ```
 # Exploratory Data Analysis
 ```{r}
+df %>% group_by(Handicap) %>% summarise(xbar=mean(Score), s=sd(Score), n=n())
+
 ggplot(df, aes(Score, fill=Handicap)) + geom_histogram(binwidth=1) + facet_grid(~Handicap) + labs(x="Score", y="Frequency", title="Histogram by Handicap")
 ggplot(df, aes(Handicap, Score, shape=Handicap, color=Handicap)) + geom_point(position="jitter") + labs(x="Handicap", y="Score", title="Scatter plot by Handicap")
 ggplot(df, aes(Handicap, Score, fill=Handicap)) + geom_boxplot() + labs(x="Handicap", y="Score", title="Boxplot by Handicap")
@@ -64,11 +67,14 @@ df.bon <- LSD.test(fit, 'Handicap', p.adj='bonferroni')
 df.lsd <- LSD.test(fit, 'Handicap', p.adj='none')
 df.scheffe <- scheffe.test(fit, 'Handicap')
 df.tukey <- HSD.test(fit, 'Handicap')
+df.dunnett <- DunnettTest(df$Score, df$Handicap)
+
 
 df.bon
 df.lsd
 df.scheffe
 df.tukey
+df.dunnett
 
 # Bonferroni
 summary(glht(fit, linfct=mcp(Handicap="Tukey")), test=adjusted(type="bonferroni"))
