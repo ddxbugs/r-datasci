@@ -8,13 +8,31 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
+# Example Correlation Speed / MPG
 ```{r}
 test <- data.frame(speed=c(20,30,40,50,60), mpg=c(24,28,30,28,24))
 test
 
 plot(test$speed, test$mpg, xlab="speed", ylab="mpg", main="Scatter plot X~Y")
+cor(test)
 ```
+# Step 2. Critial Value
 ```{r}
-
+# Step 2. Critical Value df - 2
+qt(c(0.025, 0.975), 3)
+```
+# Step. 3 Test statistic
+```{r}
+# Step 3. Test statistics
+cor.test(test$speed, test$mpg)
+```
+# T-test for regression
+```{r}
+fit <- lm(speed~mpg, data=test)
+summary(fit)
+```
+# Plot
+```{r}
+plot(test$speed, test$mpg, xlab="speed", ylab="mpg", main="Scatter plot X~Y", pch=15)
+lines(test$speed, fit$fitted.values, col="red")
 ```
