@@ -25,14 +25,17 @@ qt(c(0.025, 0.975), 3)
 ```{r}
 # Step 3. Test statistics
 cor.test(test$speed, test$mpg)
+cor.test(test$mpg, test$speed)
 ```
 # T-test for regression
 ```{r}
-fit <- lm(speed~mpg, data=test)
+fit <- lm(mpg~speed, data=test)
 summary(fit)
 ```
+
 # Plot
 ```{r}
 plot(test$speed, test$mpg, xlab="speed", ylab="mpg", main="Scatter plot X~Y", pch=15)
+
 lines(test$speed, fit$fitted.values, col="red")
 ```
