@@ -1,0 +1,44 @@
+---
+title: "movie budget and gross"
+author: "ddxbugs"
+date: "2024-03-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+df <- data.frame(budget=c(62,90,50,35,200,100,90), gross=c(65,64,48,57,601,146,47))
+df
+```
+# Plot the data
+```{r}
+plot(df)
+hist(df$budget)
+hist(df$gross)
+```
+# Perform 6-step hypothesis test on the slope of the regression line.
+```{r}
+
+```
+# Identify the estimate of the common standard deviation of the normal distributions of gross for each budget
+```{r}
+
+```
+# Calculate and interpret the 95% confidence interval for the predicted mean gross for a budget of $95 million.
+```{r}
+
+```
+# Calculate and interpret the 95% confidence interval for the predicted gross for a budget of $200 million.
+```{r}
+
+```
+# Plot the 95% confidence and prediction intervals.
+```{r}
+x_grand = sum(df$gross)/7
+x_grand
+abline()
+```
+# Find the 95% calibration interval for the estimated budget needed to obtain a gross of $210 million.
