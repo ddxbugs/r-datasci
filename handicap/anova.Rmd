@@ -67,7 +67,7 @@ df.bon <- LSD.test(fit, 'Handicap', p.adj='bonferroni')
 df.lsd <- LSD.test(fit, 'Handicap', p.adj='none')
 df.scheffe <- scheffe.test(fit, 'Handicap')
 df.tukey <- HSD.test(fit, 'Handicap')
-df.dunnett <- DunnettTest(df$Score, df$Handicap)
+df.dunnett <- DunnettTest(df$Score, df$Handicap, control='None')
 
 
 df.bon
@@ -97,3 +97,16 @@ summary(glht(fit, linfct=mcp(Handicap="Dunnett")))
 confint(glht(fit, linfct=mcp(Handicap="Dunnett")))
 ```
 
+```{r}
+percent_change <- function(x)  {
+  return ((exp(x)-1)*100)
+}
+mean_diff <- c(0.50669, 0.67069, 0.99856, 0.40588, 0.56987, 0.89775, 0.16400, 0.49187, 0.32787)
+education <- c('>16- 13-15', '>16 - 12', '>16 - <12', '16 - 13-15', '16 - 12', '16 - <12', 
+               '13-15 - 12', '13-15 - <12', '12 - <12')
+percent_diff <- percent_change(mean_diff)
+df1 <- data.frame(education, percent_diff)
+df1
+
+
+```
