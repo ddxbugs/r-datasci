@@ -1,0 +1,61 @@
+---
+title: "wheatears"
+author: "ddxbugs"
+date: "2024-03-18"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r}
+sessionInfo()
+
+# install.packages("investr")
+library(investr)
+
+df <- read.csv("../wheatears/Male Display Data Set.csv", header=TRUE)
+str(df)
+summary(df)
+sum(is.na(df))
+
+plot(df)
+```
+
+```{r}
+fit <- lm(Tcell~Mass, data=df)
+anova(fit)
+summary(fit)
+```
+
+```{r}
+predict(fit, interval="confidence", level=0.99)
+```
+
+```{r}
+newpoint <- data.frame(Mass=4.5, Tcell=NA)
+predict(fit, newdata=newpoint, interval="confidence", level=0.99)
+```
+
+```{r}
+predict(fit, newdata=newpoint, interval="prediction", level=0.99)
+```
+```{r}
+calibrate(fit, y0=0.3, interval="Wald", mean.response=TRUE, limit=FALSE)
+```
+```{r}
+calibrate(fit, y0=0.3, interval="Wald", mean.response=FALSE, limit=FALSE)
+```
+```{r}
+newx <- df$Mass
+newx <- sort(newx)
+
+pred_x <- predict(fit, newdata=data.frame(Mass=newx), interval="confidence", type="response", level=0.99)
+pred_y <- predict(fit, newdata=data.frame(Mass=newx), interval="prediction", type="response", level=0.99)
+```
+
+
+
+
