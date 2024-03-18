@@ -43,10 +43,10 @@ predict(fit, newdata=newpoint, interval="confidence", level=0.99)
 predict(fit, newdata=newpoint, interval="prediction", level=0.99)
 ```
 ```{r}
-calibrate(fit, y0=0.3, interval="Wald", mean.response=TRUE, limit=FALSE)
+calibrate(fit, y0=0.3, level=0.99, interval="Wald", mean.response=TRUE, limit=FALSE)
 ```
 ```{r}
-calibrate(fit, y0=0.3, interval="Wald", mean.response=FALSE, limit=FALSE)
+calibrate(fit, y0=0.3, level=0.99, interval="Wald", mean.response=FALSE, limit=FALSE)
 ```
 ```{r}
 newx <- df$Mass
@@ -55,6 +55,30 @@ newx <- sort(newx)
 pred_x <- predict(fit, newdata=data.frame(Mass=newx), interval="confidence", type="response", level=0.99)
 pred_y <- predict(fit, newdata=data.frame(Mass=newx), interval="prediction", type="response", level=0.99)
 ```
+
+
+```{r}
+plot(df[,1], df[,2], xlim=c(3,10), ylim=c(-0.1,0.8), main="Fitted Plot: Tcell~Mass")
+abline(fit, col="red")
+abline(h=0.3, col="blue")
+lines(newx, pred_x[,2], col="black", lty=2, lwd=2)
+lines(newx, pred_x[,3], col="black", lty=2, lwd=2)
+lines(newx, pred_y[,2], col="green", lty=2, lwd=2)
+lines(newx, pred_y[,3], col="green", lty=2, lwd=2)
+```
+```{r}
+plot(fit$residuals, main="Residual Plot", xlab="Predicted Values", ylab="Residuals")
+abline(h=0, col="black")
+```
+```{r}
+x_resids <- mean(fit$residuals)
+s_resids <- sqrt(var(fit$residuals))
+hist(fit$residuals, density=20, breaks=20, prob=TRUE, col="red",
+     xlab="Residuals", ylim=c(0,8),
+     main="Histogram of Residuals ~ N(0,1)")
+curve(dnorm(x, mean=x_resids, sd=s_resids), col="darkblue", lwd=2, add=TRUE, yaxt="n")
+```
+
 
 
 
