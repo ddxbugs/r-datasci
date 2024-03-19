@@ -58,11 +58,12 @@ pred_y <- predict(fit, newdata=data.frame(Mass=newx), interval="prediction", typ
 
 
 ```{r}
-plot(df[,1], df[,2], xlim=c(3,10), ylim=c(-0.1,0.8), main="Fitted Plot: Tcell~Mass")
+plot(df, xlim=c(3,10), ylim=c(-0.1,0.8), xlab="Mass(g)", ylab="Tcell", main="Fitted Plot: Tcell Response ~ Mass (grams)", cex=0.5)
 abline(fit, col="red")
 abline(h=0.3, col="blue")
-lines(newx, pred_x[,2], col="black", lty=2, lwd=2)
-lines(newx, pred_x[,3], col="black", lty=2, lwd=2)
+text(x=3, y=0.28, "y0 = 0.3", col="blue", cex=.5)
+lines(newx, pred_x[,2], col="black", lty=2, lwd=1)
+lines(newx, pred_x[,3], col="black", lty=2, lwd=1)
 lines(newx, pred_y[,2], col="green", lty=2, lwd=2)
 lines(newx, pred_y[,3], col="green", lty=2, lwd=2)
 ```
@@ -75,7 +76,7 @@ x_resids <- mean(fit$residuals)
 s_resids <- sqrt(var(fit$residuals))
 hist(fit$residuals, density=20, breaks=20, prob=TRUE, col="red",
      xlab="Residuals", ylim=c(0,8),
-     main="Histogram of Residuals ~ N(0,1)")
+     main="Histogram of Residuals ~ N(4.707618e-18,0.07896801)")
 curve(dnorm(x, mean=x_resids, sd=s_resids), col="darkblue", lwd=2, add=TRUE, yaxt="n")
 ```
 
