@@ -32,6 +32,7 @@ summary(fit)
 
 ```{r}
 predict(fit, interval="confidence", level=0.99)
+predict(fit, interval="prediction", level=0.99)
 ```
 
 ```{r}
@@ -42,6 +43,7 @@ predict(fit, newdata=newpoint, interval="confidence", level=0.99)
 ```{r}
 predict(fit, newdata=newpoint, interval="prediction", level=0.99)
 ```
+
 ```{r}
 calibrate(fit, y0=0.3, level=0.99, interval="Wald", mean.response=TRUE, limit=FALSE)
 ```
