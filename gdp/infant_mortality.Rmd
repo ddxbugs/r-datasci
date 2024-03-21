@@ -9,80 +9,138 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 ```{r}
-install.packages("WDI")
+# install.packages("WDI")
 library(WDI)
 library(tidyverse)
-WDIsearch("infant") # yields the indicator: SP.DYN.IMRT.IN
-WDIsearch("GDP") # yields the indicator: NY.GDP.PCAP.CD
+# WDIsearch("infant") # yields the indicator: SP.DYN.IMRT.IN
+# WDIsearch("GDP") # yields the indicator: NY.GDP.PCAP.CD
 InfantMort = WDI(,"SP.DYN.IMRT.IN",start = 2019, end = 2019)
 GDPs = WDI(,"NY.GDP.PCAP.CD",start = 2019, end = 2019)
 InfantVGDP = inner_join(GDPs,InfantMort, "country")
 InfantVGDP = InfantVGDP %>% select("country","NY.GDP.PCAP.CD","SP.DYN.IMRT.IN")
 colnames(InfantVGDP) = c("country","GDP","InfantMort")
-InfantVGDP
+# InfantVGDP
 ```
 
-
-```{r}
-fit <- lm(InfantMort~GDP, data=InfantVGDP)
-anova(fit)
-```
-
-
-```{r}
-summary(fit)
-```
-
-# Log-linear transform
-```{r}
-InfantVGDP.logInfantMort <- log(InfantVGDP$InfantMort)
-fit1 <- lm(InfantVGDP.logInfantMort~GDP, data=InfantVGDP)
-summary(fit1)
-```
-
-```{r}
-plot(fit1, main="Linear-Log Residual vs Leverage")
-```
-
-```{r}
-plot(fit1$residuals, main="Linear-Log Infant Mortality vs GDP", xlab="Predicted Values", ylab="Residuals")
-abline(h=0, col="black")
-```
-
-# Linear-log transform
-```{r}
-InfantVGDP.logGDP <- log(InfantVGDP$GDP)
-fit2 <- lm(InfantMort~InfantVGDP.logGDP, data=InfantVGDP)
-summary(fit2)
-```
-```{r}
-plot(fit2, main="Linear-Log Residual vs Leverage")
-```
-
-
-```{r}
-plot(fit2$residuals, main="Log-Log Infant Mortality vs GDP", xlab="Predicted Values", ylab="Residuals")
-abline(h=0, col="black")
-```
-
-
-# Log-log transform
-```{r}
-fit3 <- lm(InfantVGDP.logInfantMort~InfantVGDP.logGDP, data=InfantVGDP)
-summary(fit3)
-```
-```{r}
-plot(fit3, main="Log-Log Residual vs Leverage")
-```
-
-```{r}
-plot(fit3$residuals, main="Infant Mortality v. GDP", xlab="Predicted Values", ylab="Residuals")
-abline(h=0, col="black")
-```
 # GDP of the United States of America
 ```{r}
 usa <- grep("United States", InfantVGDP$country)
 usa
 InfantVGDP[usa,]
 ```
+# Log USA GDP, Infant Mortality Rate
+```{r}
+logGDP <- log(InfantVGDP[usa,]$GDP)
+logInfantMort <- log(InfantVGDP[usa,]$InfantMort)
+```
+
+
+# ANOVA
+```{r}
+fit <- lm(InfantMort~GDP, data=InfantVGDP)
+anova(fit)
+```
+
+# Fit Summary
+```{r}
+summary(fit)
+```
+
+# Log-Linear transform
+```{r}
+InfantVGDP.logInfantMort <- log(InfantVGDP$InfantMort)
+fit1 <- lm(InfantVGDP.logInfantMort~GDP, data=InfantVGDP)
+summary(fit1)
+```
+# Log-Linear plot
+```{r}
+plot(fit1, main="Log-Linear Residuals")
+```
+# Log-Linear Residual Plot
+```{r}
+plot(fit1$residuals, main="Log-Linear Residual Plot", xlab="Predicted Values", ylab="Residuals")
+abline(h=0, col="black")
+```
+# Log-Linear Regression Model
+```{r}
+plot(InfantVGDP$GDP, InfantVGDP.logInfantMort, main="Log-Linear Regression Model: Log(Infant Mortality) ~ GDP", xlab="GDP", ylab="Log(Infant Mortality Rate)")
+abline(fit1, col="red")
+```
+
+# Linear-Log transform
+```{r}
+InfantVGDP.logGDP <- log(InfantVGDP$GDP)
+fit2 <- lm(InfantMort~InfantVGDP.logGDP, data=InfantVGDP)
+summary(fit2)
+```
+# Linear-Log Residual plot
+```{r}
+plot(fit2, main="Linear-Log Residual Plot")
+```
+# Linear-Log Residual plot
+```{r}
+plot(fit2$residuals, main="Linear-Log Residual Plot", xlab="Predicted Values", ylab="Residuals")
+abline(h=0, col="black")
+```
+# Linear-Log regression model
+```{r}
+plot(InfantVGDP.logGDP, InfantVGDP$InfantMort, main="Linear-Log Model: Infant Mortality ~ Log(GDP)", xlab="Log(GDP)", ylab="Infant Mortality Rate")
+abline(fit2, col="red")
+```
+
+
+
+# Log-Log transform
+```{r}
+fit3 <- lm(InfantVGDP.logInfantMort~InfantVGDP.logGDP, data=InfantVGDP)
+summary(fit3)
+```
+# Log-Log Residual plot
+```{r}
+plot(fit3, main="Log-Log Residual Plot")
+```
+# Log-Log Residual plot
+```{r}
+plot(fit3$residuals, main="Log-Log Residual", xlab="Predicted Values", ylab="Residuals")
+abline(h=0, col="black")
+```
+# Log-Log Regression Model
+```{r}
+plot(InfantVGDP.logGDP, InfantVGDP.logInfantMort, main="Log-Log Regression Model: Log(Infant Mortality) ~ Log(GDP)", xlab="Log(GDP)", ylab="Log(Infant Mortality Rate)")
+abline(fit3, col="red")
+points(logGDP, logInfantMort, col="blue", pch=19)
+text(logGDP, logInfantMort, labels = paste("USA (", round(logGDP,2), ",", round(logInfantMort, 2), ")", sep = ""), pos = 4, cex=0.5, col="blue")
+```
+```{r}
+
+#                  Estimate Std. Error t value Pr(>|t|)    
+# (Intercept)        8.33288    0.22429   37.15   <2e-16 ***
+# InfantVGDP.logGDP -0.65519    0.02544  -25.75   <2e-16 ***
+
+# SLOPE
+a <- 0.975
+n <- nrow(InfantVGDP)
+df <- n - 2
+cv <- qt(a, df)
+se_beta_0 <- 0.22429
+se_beta_1 <- 0.02544
+
+beta_1 <- fit3$coefficients[2]
+beta_1_lower <- beta_1 - se_beta_1*cv
+beta_1_upper <- beta_1 + se_beta_1*cv
+
+2^beta_1_lower
+2^beta_1_upper
+
+# INTERCEPT
+
+beta_0 <- fit3$coefficients[1]
+beta_0_lower <- beta_0 - se_beta_0*cv
+beta_0_upper <- beta_0 + se_beta_0*cv
+
+2^beta_0_lower
+2^beta_0_upper
+```
+
+
 
