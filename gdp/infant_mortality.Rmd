@@ -1,0 +1,88 @@
+---
+title: "mortality"
+output: html_document
+date: "2024-03-21"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("WDI")
+library(WDI)
+library(tidyverse)
+WDIsearch("infant") # yields the indicator: SP.DYN.IMRT.IN
+WDIsearch("GDP") # yields the indicator: NY.GDP.PCAP.CD
+InfantMort = WDI(,"SP.DYN.IMRT.IN",start = 2019, end = 2019)
+GDPs = WDI(,"NY.GDP.PCAP.CD",start = 2019, end = 2019)
+InfantVGDP = inner_join(GDPs,InfantMort, "country")
+InfantVGDP = InfantVGDP %>% select("country","NY.GDP.PCAP.CD","SP.DYN.IMRT.IN")
+colnames(InfantVGDP) = c("country","GDP","InfantMort")
+InfantVGDP
+```
+
+
+```{r}
+fit <- lm(InfantMort~GDP, data=InfantVGDP)
+anova(fit)
+```
+
+
+```{r}
+summary(fit)
+```
+
+# Log-linear transform
+```{r}
+InfantVGDP.logInfantMort <- log(InfantVGDP$InfantMort)
+fit1 <- lm(InfantVGDP.logInfantMort~GDP, data=InfantVGDP)
+summary(fit1)
+```
+
+```{r}
+plot(fit1, main="Linear-Log Residual vs Leverage")
+```
+
+```{r}
+plot(fit1$residuals, main="Linear-Log Infant Mortality vs GDP", xlab="Predicted Values", ylab="Residuals")
+abline(h=0, col="black")
+```
+
+# Linear-log transform
+```{r}
+InfantVGDP.logGDP <- log(InfantVGDP$GDP)
+fit2 <- lm(InfantMort~InfantVGDP.logGDP, data=InfantVGDP)
+summary(fit2)
+```
+```{r}
+plot(fit2, main="Linear-Log Residual vs Leverage")
+```
+
+
+```{r}
+plot(fit2$residuals, main="Log-Log Infant Mortality vs GDP", xlab="Predicted Values", ylab="Residuals")
+abline(h=0, col="black")
+```
+
+
+# Log-log transform
+```{r}
+fit3 <- lm(InfantVGDP.logInfantMort~InfantVGDP.logGDP, data=InfantVGDP)
+summary(fit3)
+```
+```{r}
+plot(fit3, main="Log-Log Residual vs Leverage")
+```
+
+```{r}
+plot(fit3$residuals, main="Infant Mortality v. GDP", xlab="Predicted Values", ylab="Residuals")
+abline(h=0, col="black")
+```
+# GDP of the United States of America
+```{r}
+usa <- grep("United States", InfantVGDP$country)
+usa
+InfantVGDP[usa,]
+```
+
