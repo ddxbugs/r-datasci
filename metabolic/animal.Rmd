@@ -1,0 +1,44 @@
+---
+title: "animal"
+author: "ddxbugs"
+date: "2024-03-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+sessionInfo()
+getwd()
+setwd("../metabolic")
+```
+
+
+
+```{r}
+dataframe <- read.csv("Metabolism Data Prob 26.csv")
+str(dataframe)
+sum(is.na(dataframe))
+```
+```{r}
+plot(dataframe$Mass, dataframe$Metab)
+```
+
+```{r}
+fit <- lm(Metab~Mass, data=dataframe)
+```
+
+```{r}
+summary(fit)
+```
+```{r}
+anova(fit)
+```
+```{r}
+plot(fit$residuals)
+```
+
+
+
+
+
