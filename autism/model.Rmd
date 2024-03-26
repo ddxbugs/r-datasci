@@ -44,11 +44,13 @@ anova(fit)
 ```{r}
 plot(fit)
 ```
+
 # Residual plot
 ```{r}
 plot(fit$residuals, ylab="Residuals", main="Residual Plot")
 abline(h=0, col="black")
 ```
+
 # Histogram of residuals
 ```{r}
 x_resids <- mean(fit$residuals)
@@ -58,6 +60,7 @@ hist(fit$residuals, density=20, breaks=5, prob=TRUE, col="red",
      main=paste("Histogram of Residuals ~ N(",round(x_resids,3),", ",round(s_resids,3),")"))
 curve(dnorm(x, mean=x_resids, sd=s_resids), col="darkblue", lwd=2, add=TRUE, yaxt="n")
 ```
+
 # Log-linear transformation
 ```{r}
 df1 <- data.frame(Year=df$Year, logPrev=log(df$Prevalence))
@@ -78,6 +81,11 @@ fit1
 ```{r}
 summary(fit1)
 ```
+# ANOVA ln(y)~x fit
+```{r}
+anova(fit1)
+```
+
 
 # Log-linear residual plots
 ```{r}
@@ -146,7 +154,10 @@ se_beta_1 <- 0.002481
 beta_1 <- fit1$coefficients[2]
 beta_1_lower <- beta_1 - se_beta_1*cv
 beta_1_upper <- beta_1 + se_beta_1*cv
+```
 
+# Beta_1 95% Confidence Intervals
+```{r}
 beta_1_lower
 beta_1_upper
 ```
@@ -157,7 +168,10 @@ beta_1_upper
 beta_0 <- fit1$coefficients[1]
 beta_0_lower <- beta_0 - se_beta_0*cv
 beta_0_upper <- beta_0 + se_beta_0*cv
+```
 
+# Beta_0 95% Confidence Interval
+```{r}
 beta_0_lower
 beta_0_upper
 ```
@@ -168,6 +182,10 @@ year <- 2000
 pred_prev <- beta_0 + beta_1*year
 exp(pred_prev)
 ```
+```{r}
+pf(0.356250336, 3, 5, lower.tail=FALSE)
+```
+
 
 
 
