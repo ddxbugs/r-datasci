@@ -1,0 +1,166 @@
+---
+title: "model"
+author: "ddxbugs"
+date: "2024-03-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+sessionInfo()
+getwd()
+setwd("../autism")
+```
+
+```{r}
+df <- read.csv("Autism Data Prob 29.csv")
+str(df)
+View(df)
+```
+
+```{r}
+plot(df, main="Scatter plot: Autism Prevalence ~ Year")
+```
+# Simple linear regression model
+```{r}
+fit <- lm(Prevalence~Year, data=df)
+str(fit)
+```
+
+# Summary of fit
+```{r}
+summary(fit)
+```
+
+# ANOVA fit
+```{r}
+anova(fit)
+```
+# Residual plots
+```{r}
+plot(fit)
+```
+# Residual plot
+```{r}
+plot(fit$residuals)
+abline(h=0, col="black")
+```
+# Histogram of residuals
+```{r}
+x_resids <- mean(fit$residuals)
+s_resids <- sqrt(var(fit$residuals))
+hist(fit$residuals, density=20, breaks=5, prob=TRUE, col="red",
+     xlab="Residuals", ylim=c(0,1),
+     main="Histogram of Residuals ~ N(0,1)")
+curve(dnorm(x, mean=x_resids, sd=s_resids), col="darkblue", lwd=2, add=TRUE, yaxt="n")
+```
+# Log-linear transformation
+```{r}
+df1 <- data.frame(Year=df$Year, logPrev=log(df$Prevalence))
+str(df1)
+```
+
+```{r}
+plot(df1)
+```
+```{r}
+fit1 <- lm(logPrev~Year, data=df1)
+fit1
+# str(fit1)
+```
+
+```{r}
+summary(fit1)
+```
+```{r}
+plot(fit1)
+```
+
+
+
+
+
+```{r}
+newx1 <- df$Year
+newx1 <- sort(newx)
+
+pred_x1 <- predict(fit, newdata=data.frame(Year=newx), interval="confidence", type="response", level=0.95)
+pred_y1 <- predict(fit, newdata=data.frame(Year=newx), interval="prediction", type="response", level=0.95)
+
+plot(df, xlim=c(1991, 2001), ylim=c(0, 20), xlab="Year", ylab="Prevelance", main="Fitted Plot: Prevelance ~ Years", cex=0.5)
+abline(fit, col="red")
+lines(newx1, pred_x1[,2], col="black", lty=2, lwd=1)
+lines(newx1, pred_x1[,3], col="black", lty=2, lwd=1)
+lines(newx1, pred_y1[,2], col="green", lty=2, lwd=2)
+lines(newx1, pred_y1[,3], col="green", lty=2, lwd=2)
+```
+
+# Log-linear regression model
+```{r}
+newx2 <- df1$Year
+newx2 <- sort(newx)
+
+pred_x2 <- predict(fit1, newdata=data.frame(Year=newx), interval="confidence", type="response", level=0.95)
+pred_y2 <- predict(fit1, newdata=data.frame(Year=newx), interval="prediction", type="response", level=0.95)
+
+plot(df1, xlim=c(1991, 2001), ylim=c(0, 3), xlab="Year", ylab="ln(Prevelance)", main="Fitted Plot: ln(Prevelance) ~ Years", cex=0.5)
+abline(fit1, col="red")
+lines(newx2, pred_x2[,2], col="black", lty=2, lwd=1)
+lines(newx2, pred_x2[,3], col="black", lty=2, lwd=1)
+lines(newx2, pred_y2[,2], col="green", lty=2, lwd=2)
+lines(newx2, pred_y2[,3], col="green", lty=2, lwd=2)
+```
+
+```{r}
+x_resids2 <- mean(fit1$residuals)
+s_resids2 <- sqrt(var(fit1$residuals))
+hist(fit1$residuals, density=20, breaks=5, prob=TRUE, col="red",
+     xlab="Residuals", ylim=c(0,50),
+     main="Histogram of Residuals ~ N(0,1)")
+curve(dnorm(x, mean=x_resids2, sd=s_resids2), col="darkblue", lwd=2, add=TRUE, yaxt="n")
+```
+```{r}
+
+# Coefficients:
+#              Estimate Std. Error t value Pr(>|t|)    
+# (Intercept) -4.080e+02  4.953e+00  -82.38 3.94e-06 ***
+# Year         2.054e-01  2.481e-03   82.79 3.88e-06 ***
+
+# SLOPE
+a <- 0.975
+n <- nrow(df2)
+N <- n - 2
+cv <- qt(a, N)
+
+se_beta_0 <- 4.953
+se_beta_1 <- 0.002481
+
+beta_1 <- fit1$coefficients[2]
+beta_1_lower <- beta_1 - se_beta_1*cv
+beta_1_upper <- beta_1 + se_beta_1*cv
+
+beta_1_lower
+beta_1_upper
+
+# INTERCEPT
+beta_0 <- fit1$coefficients[1]
+beta_0_lower <- beta_0 - se_beta_0*cv
+beta_0_upper <- beta_0 + se_beta_0*cv
+
+beta_0_lower
+beta_0_upper
+```
+
+```{r}
+year <- 2000
+pred_prev <- beta_0 + beta_1*year
+exp(pred_prev)
+```
+
+
+
+
+
+
+
