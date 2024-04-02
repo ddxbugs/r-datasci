@@ -1,0 +1,56 @@
+---
+title: "mammal"
+author: "ddxbugs"
+date: "2024-03-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+getwd()
+setwd("../brain")
+
+library(plotly)
+library(ggplot2)
+library(tidyverse)
+
+```
+
+```{r}
+dataframe <- read.csv("Brain.csv", header=TRUE)
+dataframe
+```
+
+```{r}
+# install.packages("naniar")
+library(naniar)
+gg_miss_var(dataframe)
+```
+
+
+
+
+
+
+
+```{r}
+# Plot 3D
+fig <- plot_ly(dataframe, x = ~Gestation, y = ~Litter, z = ~Brain, size= ~Body, color= ~Species)
+fig <- fig %>% add_markers()
+fig <- fig %>% layout(scene = list(xaxis = list(title = 'Gestation'),
+                     yaxis = list(title = 'Litter'),
+                     zaxis = list(title = 'Brain')))
+fig
+```
+
+
+```{r}
+fit <- lm(Brain~Gestation+Litter+Body, data=dataframe)
+summary(fit)
+```
+```{r}
+anova(fit)
+```
+```{r}
+plot(fit)
+```
