@@ -28,7 +28,30 @@ library(tidyverse)
 dataset %>% ggplot(aes(Force, Height, color=Species)) + geom_point() + geom_smooth(method="lm") + ggtitle("Linear regression model: crab species closing force v. propodus height")
 dataset %>% ggplot(aes(Force, Height, color=Species, shape=Species)) + geom_point() + ggtitle("Scatter plot: crab species closing force v. propodus height") 
 ```
+# Build the model
 ```{r}
+# force = b0 + b1*height + b2*species + b3(height*species)
+model <- lm(Force~Height*Species, data=dataset)
+summary(model)
+anova(model)
+```
+# Residual plots
+```{r}
+plot(model)
+```
+# Scatter plot of residuals
+```{r}
+plot(model$residuals, main="Scatter plot of residuals", xlab="Predicted values", ylab="Residuals", pch=19)
+abline(h=0, col="black")
+```
+# Histogram of residuals
+```{r}
+resid <- model$residuals
+x_bar <- mean(resid)
+std_dev <- sqrt(var(resid))
 
 ```
+
+
+
 
