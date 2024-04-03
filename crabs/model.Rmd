@@ -59,7 +59,17 @@ curve(dnorm(x, mean=x_bar, sd=std_dev),
 ```{r}
 # install.packages("car")
 library(car)
+qqPlot(model$residuals, xlab="Quantile", ylab="Residuals", main="Q-Q plot of residuals")
 ```
+# Studentized residual plot
+```{r}
+library(MASS)
+# calculate the studentized residuals
+sresids <- studres(model)
+plot(model$fitted.values, sresids, ylab="Studentized residuals", xlab="Predicted values", main="Studentized residuals plot")
+abline(h=0)
+```
+
 
 
 
