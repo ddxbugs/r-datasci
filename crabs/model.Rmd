@@ -49,8 +49,19 @@ abline(h=0, col="black")
 resid <- model$residuals
 x_bar <- mean(resid)
 std_dev <- sqrt(var(resid))
-
+hist(resid, density=20, breaks=20, prob=TRUE, col="red",
+     xlab="Residuals", ylim=c(0,0.2),
+     main="Histogram of residuals ~ N(0,1)")
+curve(dnorm(x, mean=x_bar, sd=std_dev),
+      col="darkblue", lwd=2, add=TRUE, yaxt="n")
 ```
+# Q-Q residual plot
+```{r}
+# install.packages("car")
+library(car)
+```
+
+
 
 
 
