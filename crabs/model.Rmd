@@ -1,0 +1,34 @@
+---
+title: "model"
+author: "ddxbugs"
+date: "2024-04-03"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+sessionInfo()
+getwd()
+setwd("../crabs")
+```
+
+
+```{r}
+dataset <- read.csv("Crab17.csv", header=TRUE)
+dataset
+```
+
+# Plot the data
+```{r}
+library(tidyverse)
+
+dataset %>% ggplot(aes(Force, Height, color=Species)) + geom_point() + geom_smooth(method="lm") + ggtitle("Linear regression model: crab species closing force v. propodus height")
+dataset %>% ggplot(aes(Force, Height, color=Species, shape=Species)) + geom_point() + ggtitle("Scatter plot: crab species closing force v. propodus height") 
+```
+```{r}
+
+```
+
