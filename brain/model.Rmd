@@ -62,6 +62,8 @@ anova(logFit)
 ```
 
 ```{r}
+logFit %>% ggplot(aes(logGestation, logLitter, color=logBody)) + geom_point() + geom_smooth(method="lm") + ggtitle("Linear regression model: log(Brain)~log(Gestation)+log(Litter)")
+#dataset %>% ggplot(aes(Force, Height, color=Species, shape=Species)) + geom_point() + ggtitle("Scatter plot: ") 
 plot(logFit)
 ```
 # Scatter plot of residuals
@@ -96,6 +98,14 @@ sresids <- studres(logFit)
 plot(logFit$fitted.values, sresids, ylab="Studentized residuals", xlab="Predicted values", main="Studentized residuals Plot")
 abline(h=c(-2,2), v=0, col="darkblue")
 ```
+
+# Calculate the MSE
+```{r}
+resids <- resid(logFit)
+MSE <- sum(resids^2) / length(resids)
+MSE
+```
+
 
 
 
