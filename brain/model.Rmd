@@ -26,12 +26,11 @@ df
 library(naniar)
 gg_miss_var(df)
 ```
+# Plot the data
 ```{r}
-plot(df$Gestation)
-plot(df$Litter)
-plot(df$Body)
-plot(df$Brain)
+plot(df)
 ```
+# Perform log-log transformation
 ```{r}
 logBrain <- log(df$Brain)
 logGestation <- log(df$Gestation)
@@ -40,6 +39,7 @@ logBody <- log(df$Body)
 logDF <- data.frame(Species=df$Species, LogBrain=logBrain, LogGestation=logGestation, LogLitter=logLitter, LogBody=logBody)
 logDF
 ```
+# Plot the log-log transformation
 ```{r}
 plot(logDF)
 ```
@@ -64,4 +64,40 @@ anova(logFit)
 ```{r}
 plot(logFit)
 ```
+# Scatter plot of residuals
+```{r}
+plot(logFit$residuals, main="Scatter plot of residuals",
+     xlab="Predicted values", ylab="Residuals", pch=19)
+abline(h=0, col="black")
+```
+# Histogram of residuals with normal distribution
+```{r}
+resids <- logFit$residuals
+x_bar <- mean(resids)
+std_dev <- var(resids)
+
+hist(resids, density=20, breaks=20, prob=TRUE, col="red",
+     xlab="Residuals", ylim=c(0,2),
+     main="Histogram of residuals ~ N(0,1)")
+curve(dnorm(x, mean=x_bar, sd=std_dev),
+      col="darkblue", lwd=2, add=TRUE, yaxt="n")
+```
+# Q-Q plot
+```{r}
+library(car)
+qqPlot(logFit$residuals, xlab="Quantiles", ylab="Residuals", main="Q-Q plot of residuals")
+```
+# Studentized residual plot
+```{r}
+library(MASS)
+
+# calculate studentized residuals
+sresids <- studres(logFit)
+plot(logFit$fitted.values, sresids, ylab="Studentized residuals", xlab="Predicted values", main="Studentized residuals Plot")
+abline(h=c(-2,2), v=0, col="darkblue")
+```
+
+
+
+
 
