@@ -17,40 +17,51 @@ library(tidyverse)
 ```
 
 ```{r}
-dataframe <- read.csv("Brain.csv", header=TRUE)
-dataframe
+df <- read.csv("Brain.csv", header=TRUE)
+df
 ```
 
 ```{r}
 # install.packages("naniar")
 library(naniar)
-gg_miss_var(dataframe)
+gg_miss_var(df)
+```
+```{r}
+plot(df$Gestation)
+plot(df$Litter)
+plot(df$Body)
+plot(df$Brain)
+```
+```{r}
+logBrain <- log(df$Brain)
+logGestation <- log(df$Gestation)
+logLitter <- log(df$Litter)
+logBody <- log(df$Body)
+logDF <- data.frame(Species=df$Species, LogBrain=logBrain, LogGestation=logGestation, LogLitter=logLitter, LogBody=logBody)
+logDF
+```
+```{r}
+plot(logDF)
 ```
 
-
-
-
-
-
-
 ```{r}
-# Plot 3D
-fig <- plot_ly(dataframe, x = ~Gestation, y = ~Litter, z = ~Brain, size= ~Body, color= ~Species)
-fig <- fig %>% add_markers()
-fig <- fig %>% layout(scene = list(xaxis = list(title = 'Gestation'),
-                     yaxis = list(title = 'Litter'),
-                     zaxis = list(title = 'Brain')))
-fig
-```
-
-
-```{r}
-fit <- lm(Brain~Gestation+Litter+Body, data=dataframe)
+fit <- lm(Brain ~ Gestation + Litter + Body, data=df)
 summary(fit)
-```
-```{r}
 anova(fit)
 ```
 ```{r}
 plot(fit)
 ```
+
+
+
+```{r}
+logFit <- lm(logBrain ~ logGestation + logLitter + logBody, data=logDF)
+summary(logFit)
+anova(logFit)
+```
+
+```{r}
+plot(logFit)
+```
+
