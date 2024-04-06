@@ -105,6 +105,24 @@ resids <- resid(logFit)
 MSE <- sum(resids^2) / length(resids)
 MSE
 ```
+# Calculate 95% confidence interval
+```{r}
+# Coefficients from the regression output
+coef_logGestation <- 0.41794
+coef_logLitter <- -0.31007
+
+# Standard errors from the regression output
+se_logGestation <- 0.14078
+se_logLitter <- 0.11593
+
+# Calculate the confidence intervals
+ci_logGestation <- exp(c(coef_logGestation - 1.984 * se_logGestation, coef_logGestation + 1.984 * se_logGestation))
+ci_logLitter <- exp(c(coef_logLitter - 1.984 * se_logLitter, coef_logLitter + 1.984 * se_logLitter))
+
+# Print the back-transformed confidence intervals
+print(ci_logGestation)
+print(ci_logLitter)
+```
 
 
 
