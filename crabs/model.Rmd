@@ -25,13 +25,13 @@ dataset
 ```{r}
 library(tidyverse)
 
-dataset %>% ggplot(aes(Force, Height, color=Species)) + geom_point() + geom_smooth(method="lm") + ggtitle("Linear regression model: crab species closing force v. propodus height")
-dataset %>% ggplot(aes(Force, Height, color=Species, shape=Species)) + geom_point() + ggtitle("Scatter plot: crab species closing force v. propodus height") 
+dataset %>% ggplot(aes(Height, Force, color=Species)) + geom_point() + geom_smooth(method="lm") + ggtitle("Linear regression model: crab species closing force v. propodus height")
+dataset %>% ggplot(aes(Height,Force,  color=Species, shape=Species)) + geom_point() + ggtitle("Scatter plot: crab species closing force v. propodus height") 
 ```
 # Build the model
 ```{r}
 # force = b0 + b1*height + b2*species + b3(height*species)
-model <- lm(Force~Height*Species, data=dataset)
+model <- lm(Force~Height+Species+Height*Species, data=dataset)
 summary(model)
 anova(model)
 ```
