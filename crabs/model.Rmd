@@ -31,6 +31,7 @@ dataset %>% ggplot(aes(Height,Force,  color=Species, shape=Species)) + geom_poin
 # Build the model
 ```{r}
 # force = b0 + b1*height + b2*species + b3(height*species)
+dataset$Species <- relevel(factor(dataset$Species), ref="Lophopanopeus bellus")
 model <- lm(Force~Height+Species+Height*Species, data=dataset)
 summary(model)
 anova(model)
